@@ -83,12 +83,12 @@ void *handelFile(void *data) {
                 if (rCmd == FS_DATA) {
                     length = dataDec.getLength();
                     if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return nullptr;
-                    int rel = fileIO.write((char *) buffer,DataEnc::headerSize(), length);
+                    int rel = fileIO.write((char *) buffer, DataEnc::headerSize(), length);
 //                    int rel = length;
                     totalRecv += rel;
                     int progeress = (int) (totalRecv * 100.0F / iterator->fileSize);
                     if (p != progeress) {
-                        printf("prngeress:%d\n", progeress);
+                        printf("progeress:%d\n", progeress);
                         p = progeress;
                     }
                 } else if (rCmd == FS_END) {
@@ -108,6 +108,8 @@ void *handelFile(void *data) {
 
         }
     }
+    delete[] buffer;
+    puts("client close");
     client->close();
     return nullptr;
 }
@@ -133,10 +135,7 @@ int main() {
     while (true) {
         int len = server.recv(&clientAddr, buffer, 2048);
         DataDec dataDec(buffer, len);
-
         int cmd = dataDec.getCmd();
-
-
         if (cmd == UDP_SET_DEVICES) {
             int port = dataDec.getInt();
             char *ip = dataDec.getStr();
@@ -153,7 +152,7 @@ int main() {
             DataEnc dataEnc(buffer, 2048);
             dataEnc.setCmd(UDP_SET_DEVICES);
             dataEnc.putInt(DEFAULT_TCPPORT);
-            // 此处要手动输入Win IP 应为暂时还没有实现获取Win IP 的方法
+            // 此处要手动输入Win IP 因为暂时还没有实现获取Win IP 的方法
             dataEnc.putStr("192.168.31.231");
             dataEnc.putStr("Win Test Client");
             dataEnc.putInt(1);
