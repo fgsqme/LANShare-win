@@ -13,15 +13,18 @@ set(
         tools/DataEnc.cpp
         tools/ByteUtils.cpp
         tools/UDPServer.cpp
+        tools/UDPClient.cpp
         tools/TCPServer.cpp
         tools/TCPClient.cpp
         tools/NetWorldUtils.cpp
-        tools/IOUtils.cpp)
+        tools/IOUtils.cpp
+        src/Device.cpp )
 
 add_executable(
         LANShare
         ${SORCES}
-        src/LANShare.cpp)
+        src/LANShare.cpp
+        src/main.cpp)
 
 add_executable(
         test

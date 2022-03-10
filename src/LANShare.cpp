@@ -4,6 +4,7 @@
 #include "DataDec.h"
 #include "DataEnc.h"
 #include "UDPServer.h"
+#include "UDPClient.h"
 #include "TCPServer.h"
 #include "LANShare.h"
 #include "IOUtils.h"
@@ -12,16 +13,24 @@
 #define BUFF_SIZE 1024 * 1024 * 2
 using namespace std;
 
-struct MFile {
-    string fileName;
-    mlong fileSize;
-};
 
-void *handelFile(void *data) {
-    TCPClient *client = static_cast<TCPClient *>(data);
+LANShare::LANShare() {
+    mDevice = new Device();
+    mDevice->setDevIp("192.168.31.231");
+    mDevice->setDevPort(DEFAULT_TCPPORT);
+    mDevice->setDevName("Win Test Client");
+    mDevice->setDevMode(Device::WIN);
+}
+
+LANShare::~LANShare() {
+    delete mDevice;
+}
+
+void LANShare::handelFile(TCPClient *client) {
+//    TCPClient *client = static_cast<TCPClient *>(data);
     mbyte *buffer = new mbyte[BUFF_SIZE];
 
-    if (client->recvo(buffer, DataEnc::headerSize()) != DataEnc::headerSize()) return nullptr;
+    if (client->recvo(buffer, DataEnc::headerSize()) != DataEnc::headerSize()) return;
 
     DataDec dataDec(buffer, BUFF_SIZE);
 
@@ -30,7 +39,7 @@ void *handelFile(void *data) {
     if (cmd == FS_SHARE_FILE) {
         int count = dataDec.getCount();
         int length = dataDec.getLength();
-        if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return nullptr;
+        if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return;
         dataDec.setData(buffer, DataEnc::headerSize() + length);
 
         int port = dataDec.getInt();
@@ -42,9 +51,9 @@ void *handelFile(void *data) {
         list<MFile> files;
 
         for (int i = 0; i < count; i++) {
-            if (client->recvo(buffer, 0, DataEnc::headerSize(), 0) != DataEnc::headerSize()) return nullptr;
+            if (client->recvo(buffer, 0, DataEnc::headerSize(), 0) != DataEnc::headerSize()) return;
             length = dataDec.getLength();
-            if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return nullptr;
+            if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return;
             dataDec.setData(buffer, DataEnc::headerSize() + length);
 
             long fileSize = dataDec.getLong();
@@ -65,6 +74,7 @@ void *handelFile(void *data) {
 
         // 需要手动创建文件夹
         string path = "D:\\LANShare\\";
+//        string path = "/sdcard/LANShare/";
 
 
         list<MFile>::iterator iterator;
@@ -82,7 +92,7 @@ void *handelFile(void *data) {
 
                 if (rCmd == FS_DATA) {
                     length = dataDec.getLength();
-                    if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return nullptr;
+                    if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return;
                     int rel = fileIO.write((char *) buffer, DataEnc::headerSize(), length);
 //                    int rel = length;
                     totalRecv += rel;
@@ -111,29 +121,33 @@ void *handelFile(void *data) {
     delete[] buffer;
     puts("client close");
     client->close();
-    return nullptr;
+    return;
 }
 
-void createTcpServer() {
-    TCPServer tcpServer(DEFAULT_TCPPORT);
+const char *testIP = "192.168.31.231";
+const char *lanIp = "192.168.31.255";
+
+void LANShare::scannDevice() {
+    mbyte buffer[2048];
     while (true) {
-        TCPClient *client = tcpServer.accept();
-        puts("tcp client connectd");
-        pthread_t newClient;
-        pthread_create(&newClient, nullptr, handelFile, client);
+        DataEnc dataEnc(buffer, 2048);
+        dataEnc.setCmd(UDP_GET_DEVICES);
+        dataEnc.putStr(testIP);
+        UDPClient udpClient;
+        udpClient.sendto(lanIp, DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
+        sleep(5);
     }
-
 }
 
-int main() {
-    thread t(createTcpServer);
-//    string ip = NetWorldUtils::getLocalIP();
-//    cout << ip << endl;
+void LANShare::runRecive(LANShare *lanShare) {
     UDPServer server(DEFAULT_UDPPORT);
     mbyte *buffer = new mbyte[2048];
     sockaddr_in clientAddr;
     while (true) {
         int len = server.recv(&clientAddr, buffer, 2048);
+        if (len <= 0) {
+            break;
+        }
         DataDec dataDec(buffer, len);
         int cmd = dataDec.getCmd();
         if (cmd == UDP_SET_DEVICES) {
@@ -141,6 +155,9 @@ int main() {
             char *ip = dataDec.getStr();
             char *devName = dataDec.getStr();
             int devModel = dataDec.getInt();
+
+            // 判断是否为自己发送的指令
+            //if (strcmp(ip, testIP) == 0) continue;
 
             printf("device on line ip:%s:%d devName:%s devModel:%d\n", ip, port, devName, devModel);
 
@@ -153,19 +170,38 @@ int main() {
             dataEnc.setCmd(UDP_SET_DEVICES);
             dataEnc.putInt(DEFAULT_TCPPORT);
             // 此处要手动输入Win IP 因为暂时还没有实现获取Win IP 的方法
-            dataEnc.putStr("192.168.31.231");
-            dataEnc.putStr("Win Test Client");
-            dataEnc.putInt(1);
+            dataEnc.putString(lanShare->getMDevice()->getDevIp());
+            dataEnc.putString(lanShare->getMDevice()->getDevName());
+            dataEnc.putInt(lanShare->getMDevice()->getDevMode());
 
-            struct sockaddr_in clientAddr1;
+            sockaddr_in clientAddr1{};
             clientAddr1.sin_family = AF_INET;
             clientAddr1.sin_port = htons(DEFAULT_UDPPORT);
-            clientAddr1.sin_addr.S_un.S_addr = inet_addr(ip);
-//            long addr = inet_addr("127.0.0.1");
+            clientAddr1.sin_addr.s_addr = inet_addr(ip);
+
             server.send(&clientAddr1, dataEnc.getData(), dataEnc.getDataLen());
 
             delete ip;
         }
     }
-    return 0;
 }
+
+void LANShare::createTcpServer() {
+    TCPServer tcpServer(DEFAULT_TCPPORT);
+    while (true) {
+        TCPClient *client = tcpServer.accept();
+        if (client == nullptr) {
+            break;
+        }
+        thread tRunRecive(LANShare::handelFile, client);
+        tRunRecive.detach();
+    }
+}
+
+Device *LANShare::getMDevice() const {
+    return mDevice;
+}
+
+
+
+

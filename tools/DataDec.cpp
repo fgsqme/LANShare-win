@@ -53,6 +53,19 @@ char *DataDec::getStr() {
     return nullptr;
 }
 
+string DataDec::getString() {
+    int len = getInt();
+    if (len > 0 && (index + len) <= m_byteLen) {
+        char str[len + 1];
+        memset(str, 0, len);
+        memcpy(str, m_bytes + index, len);
+        str[len] = '\0';
+        index += len;
+        return string(str);
+    }
+    return string("");
+}
+
 
 void DataDec::getStr(char *buff) {
     int len = getInt();
@@ -174,6 +187,7 @@ int DataDec::getDataIndex() const {
 void DataDec::setDataIndex(int i) {
     index = i + HEADER_LEN;
 }
+
 
 
 

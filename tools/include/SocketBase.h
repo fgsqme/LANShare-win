@@ -11,6 +11,7 @@
 
 #include <winsock2.h>
 #include <cstdio>
+#include <ws2tcpip.h>
 
 typedef SOCKET mFd;
 #elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)

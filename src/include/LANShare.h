@@ -5,6 +5,10 @@
 #ifndef LANSHARE_LANSHARE_H
 #define LANSHARE_LANSHARE_H
 
+#include "TCPClient.h"
+#include "Device.h"
+#include <list>
+
 // 局域网通讯命令
 #define UDP_GET_DEVICES  1001       // 获取设备
 #define UDP_SET_DEVICES  1002       // 设置设备
@@ -29,5 +33,33 @@
 #define DEFAULT_UDPPORT 4573
 #define DEFAULT_TCPPORT 5856
 
+struct MFile {
+    string fileName;
+    mlong fileSize;
+};
+
+
+class LANShare {
+
+public:
+    // 在线的设备
+    list<Device> onLineDevices;
+    // 自己设备信息
+    Device *mDevice;
+
+    Device *getMDevice() const;
+
+    LANShare();
+
+    ~LANShare();
+
+    static void runRecive(LANShare *lanShare);
+
+    static void createTcpServer();
+
+    static void scannDevice();
+
+    static void handelFile(TCPClient *client);
+};
 
 #endif //LANSHARE_LANSHARE_H

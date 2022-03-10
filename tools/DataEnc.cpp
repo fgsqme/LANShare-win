@@ -94,6 +94,10 @@ DataEnc &DataEnc::putStr(const char *str) {
     return putStr(str, strlen(str));
 }
 
+DataEnc &DataEnc::putString(const string &str) {
+    return putStr(str.c_str(), str.size());
+}
+
 int DataEnc::getDataLen() {
     return index;
 }

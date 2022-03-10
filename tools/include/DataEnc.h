@@ -3,10 +3,12 @@
 //
 
 #include "Type.h"
+#include <string>
 
 #ifndef WZ_CHEAT_DATAENC_H
 #define WZ_CHEAT_DATAENC_H
 
+using namespace std;
 
 class DataEnc {
 private:
@@ -19,12 +21,17 @@ private:
 
 public:
     DataEnc();
-    DataEnc(mbyte *bytes,int bytelen);
-    void setData(mbyte *bytes,int bytelen);
+
+    DataEnc(mbyte *bytes, int bytelen);
+
+    void setData(mbyte *bytes, int bytelen);
 
     void setCmd(int cmd);
+
     void setByteCmd(mbyte cmd);
+
     void setCount(int count);
+
     void setLength(int len);
 
 
@@ -36,22 +43,25 @@ public:
     DataEnc &putDouble(double val);           //往数据包添加double
     DataEnc &putStr(const char *str, int len);       //往数据包添加字符
     DataEnc &putStr(const char *str);       //往数据包添加字符
+    DataEnc &putString(const string &str);       //往数据包添加字符
 
-    DataEnc &putInt(int val,int i);                 //往数据包添加int
-    DataEnc &putLong(mlong val,int i);              //往数据包添加long
-    DataEnc &putByte(mbyte val,int i);              //往数据包添加byte
-    DataEnc &putFloat(float val,int i);             //往数据包添加flaot
-    DataEnc &putDouble(double val,int i);           //往数据包添加double
-    DataEnc &putStr(const char *str, int len,int i);       //往数据包添加字符
+    DataEnc &putInt(int val, int i);                 //往数据包添加int
+    DataEnc &putLong(mlong val, int i);              //往数据包添加long
+    DataEnc &putByte(mbyte val, int i);              //往数据包添加byte
+    DataEnc &putFloat(float val, int i);             //往数据包添加flaot
+    DataEnc &putDouble(double val, int i);           //往数据包添加double
+    DataEnc &putStr(const char *str, int len, int i);       //往数据包添加字符
 
     int getDataLen();
 
-    mbyte* getData();
+    mbyte *getData();
 
-    void reset() ;
+    void reset();
 
     static int headerSize();
+
     int getDataIndex() const;
+
     void setDataIndex(int i);
 };
 

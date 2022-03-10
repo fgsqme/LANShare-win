@@ -1,6 +1,7 @@
 #ifndef EP_UDPCLIENT_H
 #define EP_UDPCLIENT_H
 
+#include <string>
 #include "SocketBase.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ public:
 
     UDPClient(const string &ip, int port);
 
-    ssize_t sendto(char *ip, int port, const void *buff, int len, int flag = 0) const;
+    ssize_t sendto(const char *ip, int port, const void *buff, int len, int flag = 0) const;
 
     ssize_t send(const void *buff, int len, int flag = 0);
 
