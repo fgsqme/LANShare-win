@@ -6,23 +6,24 @@
 #define LANSHARE_WIN_DEVICE_H
 
 #include <string>
+#include "Type.h"
 
 using namespace std;
 
 class Device {
 public:
-    static const int UNKNOW = -1;
-    static const int ANDROID = 1;
-    static const int WIN = 2;
-    static const int LINUX = 3;
-    static const int MAC = 4;
-    static const int IOS = 5;
+    static const int L_UNKNOW = -1;
+    static const int L_ANDROID = 1;
+    static const int L_WIN = 2;
+    static const int L_LINUX = 3;
+    static const int L_MAC = 4;
+    static const int L_IOS = 5;
 private:
     string devName; // 设备名称
     string devIP;   // 设备TCP接收文件IP
     int devPort;    // 设备TCP接收文件端口
     int devMode;    // 设备代号
-    long setTime;   // 最后心跳时间
+    mlong setTime;   // 最后心跳时间
 public:
 
 
@@ -42,9 +43,9 @@ public:
 
     void setDevMode(int devMode);
 
-    long getSetTime() const;
+    mlong getSetTime() const;
 
-    void setSetTime(long setTime);
+    void setSetTime(mlong setTime);
 };
 
 

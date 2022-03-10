@@ -9,6 +9,7 @@
 #include "LANShare.h"
 #include "IOUtils.h"
 #include "NetWorldUtils.h"
+#include "TimeTools.h"
 
 #define BUFF_SIZE 1024 * 1024 * 2
 using namespace std;
@@ -19,7 +20,7 @@ LANShare::LANShare() {
     mDevice->setDevIp("192.168.31.231");
     mDevice->setDevPort(DEFAULT_TCPPORT);
     mDevice->setDevName("Win Test Client");
-    mDevice->setDevMode(Device::WIN);
+    mDevice->setDevMode(Device::L_WIN);
 }
 
 LANShare::~LANShare() {
@@ -27,7 +28,6 @@ LANShare::~LANShare() {
 }
 
 void LANShare::handelFile(TCPClient *client) {
-//    TCPClient *client = static_cast<TCPClient *>(data);
     mbyte *buffer = new mbyte[BUFF_SIZE];
 
     if (client->recvo(buffer, DataEnc::headerSize()) != DataEnc::headerSize()) return;
@@ -124,18 +124,37 @@ void LANShare::handelFile(TCPClient *client) {
     return;
 }
 
-const char *testIP = "192.168.31.231";
 const char *lanIp = "192.168.31.255";
 
-void LANShare::scannDevice() {
+pthread_mutex_t mMapMutex;
+
+void LANShare::scannDevice(LANShare *lanShare) {
     mbyte buffer[2048];
     while (true) {
         DataEnc dataEnc(buffer, 2048);
         dataEnc.setCmd(UDP_GET_DEVICES);
-        dataEnc.putStr(testIP);
+        dataEnc.putString(lanShare->getMDevice()->getDevIp());
         UDPClient udpClient;
         udpClient.sendto(lanIp, DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
+
+        pthread_mutex_lock(&mMapMutex);
+        map<string, Device>::iterator iter;
+
+        for (iter = lanShare->onLineDevices.begin(); iter != lanShare->onLineDevices.end();) {
+            mlong devTime = iter->second.getSetTime();
+            mlong currentTime = TimeTools::getCurrentTime();
+            mlong timeOut = currentTime - devTime;
+            if (timeOut > (1000 * 6)) {
+                //printf("timeOut:%d ip:%s\n", timeOut, iter->second.getDevIp().c_str());
+                lanShare->onLineDevices.erase(iter++);
+            } else {
+                ++iter;
+            }
+        }
+        pthread_mutex_unlock(&mMapMutex);
         sleep(5);
+        // 打印当前设备数
+        // printf("device count:%d\n", lanShare->onLineDevices.size());
     }
 }
 
@@ -157,10 +176,20 @@ void LANShare::runRecive(LANShare *lanShare) {
             int devModel = dataDec.getInt();
 
             // 判断是否为自己发送的指令
-            //if (strcmp(ip, testIP) == 0) continue;
+            if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
 
-            printf("device on line ip:%s:%d devName:%s devModel:%d\n", ip, port, devName, devModel);
+            Device device;
+            device.setDevMode(devModel);
+            device.setDevName(devName);
+            device.setDevIp(ip);
+            device.setDevPort(port);
+            device.setSetTime(TimeTools::getCurrentTime());
 
+            pthread_mutex_lock(&mMapMutex);
+            lanShare->onLineDevices[ip] = device;
+            pthread_mutex_unlock(&mMapMutex);
+
+            //  printf("device on line ip:%s:%d devName:%s devModel:%d\n", ip, port, devName, devModel);
             delete ip;
             delete devName;
         } else if (cmd == UDP_GET_DEVICES) {

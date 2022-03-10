@@ -36,10 +36,10 @@ void Device::setDevMode(int devMode) {
     Device::devMode = devMode;
 }
 
-long Device::getSetTime() const {
+mlong Device::getSetTime() const {
     return setTime;
 }
 
-void Device::setSetTime(long setTime) {
+void Device::setSetTime(mlong setTime) {
     Device::setTime = setTime;
 }

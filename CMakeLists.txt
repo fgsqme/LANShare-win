@@ -17,6 +17,7 @@ set(
         tools/TCPServer.cpp
         tools/TCPClient.cpp
         tools/NetWorldUtils.cpp
+        tools/TimeTools.cpp
         tools/IOUtils.cpp
         src/Device.cpp )
 

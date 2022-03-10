@@ -16,6 +16,6 @@ int main() {
     thread tRunRecive(LANShare::runRecive, &lanShare);
     // 扫描设备线程
 //    thread tScannDevice(scannDevice);
-    LANShare::scannDevice();
+    LANShare::scannDevice(&lanShare);
     return 0;
 }

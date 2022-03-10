@@ -8,6 +8,7 @@
 #include "TCPClient.h"
 #include "Device.h"
 #include <list>
+#include <map>
 
 // 局域网通讯命令
 #define UDP_GET_DEVICES  1001       // 获取设备
@@ -42,8 +43,8 @@ struct MFile {
 class LANShare {
 
 public:
-    // 在线的设备
-    list<Device> onLineDevices;
+    // 保存在线的设备
+    map <string, Device> onLineDevices;
     // 自己设备信息
     Device *mDevice;
 
@@ -57,7 +58,7 @@ public:
 
     static void createTcpServer();
 
-    static void scannDevice();
+    static void scannDevice(LANShare *lanShare);
 
     static void handelFile(TCPClient *client);
 };
