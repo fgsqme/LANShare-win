@@ -40,6 +40,10 @@ bool DataDec::getBool() {
     return getByte();
 }
 
+int DataDec::getStrLen() {
+    return getInt(index);;
+}
+
 char *DataDec::getStr() {
     int len = getInt();
     if (len > 0 && (index + len) <= m_byteLen) {
@@ -187,6 +191,7 @@ int DataDec::getDataIndex() const {
 void DataDec::setDataIndex(int i) {
     index = i + HEADER_LEN;
 }
+
 
 
 

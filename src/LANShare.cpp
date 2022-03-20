@@ -10,12 +10,14 @@
 #include "IOUtils.h"
 #include "NetWorldUtils.h"
 #include "TimeTools.h"
+#include "CodeUtils.h"
 
 #define BUFF_SIZE 1024 * 1024 * 2
 using namespace std;
 
 
 LANShare::LANShare() {
+    // 测试客户端数据
     mDevice = new Device();
     mDevice->setDevIp("192.168.31.231");
     mDevice->setDevPort(DEFAULT_TCPPORT);
@@ -26,6 +28,7 @@ LANShare::LANShare() {
 LANShare::~LANShare() {
     delete mDevice;
 }
+
 
 void LANShare::handelFile(TCPClient *client) {
     mbyte *buffer = new mbyte[BUFF_SIZE];
@@ -41,6 +44,8 @@ void LANShare::handelFile(TCPClient *client) {
         int length = dataDec.getLength();
         if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return;
         dataDec.setData(buffer, DataEnc::headerSize() + length);
+
+        printf("file count:%d\n", count);
 
         int port = dataDec.getInt();
         char *ip = dataDec.getStr();
@@ -58,13 +63,19 @@ void LANShare::handelFile(TCPClient *client) {
 
             long fileSize = dataDec.getLong();
             // 文件名称
-            char *fileName = dataDec.getStr();
+            char *strFilename = dataDec.getStr();
+            char *fileName = CodeUtils::UTFToGBK(strFilename);
+            delete strFilename;
 
-            printf("fileName:%s fileSize:%ld\n", fileName, fileSize);
+            int fileType = dataDec.getInt();
+            char *videoTime = dataDec.getStr();
+
+            printf("fileType:%d fileName:%s  fileSize:%ld\n", fileType, fileName, fileSize);
 
             MFile mFile{fileName, fileSize};
             files.push_back(mFile);
 
+            delete videoTime;
             delete fileName;
         }
 
@@ -80,28 +91,25 @@ void LANShare::handelFile(TCPClient *client) {
         list<MFile>::iterator iterator;
         for (iterator = files.begin(); iterator != files.end(); ++iterator) {
             string newPath = path + iterator->fileName;
-            printf("recv fileName%s fileSize:%lld\n", iterator->fileName.c_str(), iterator->fileSize);
+            printf("recv fileName:%s fileSize:%lld\n", iterator->fileName.c_str(), iterator->fileSize);
             IOUtils fileIO(newPath.c_str());
             mlong totalRecv = 0;
             int p = 0;
             while (true) {
                 if (client->recvo(buffer, 0, DataEnc::headerSize(), 0) != DataEnc::headerSize()) break;
                 dataDec.setData(buffer, BUFF_SIZE);
-
                 mbyte rCmd = dataDec.getByteCmd();
-
                 if (rCmd == FS_DATA) {
                     length = dataDec.getLength();
                     if (client->recvo(buffer, DataEnc::headerSize(), length, 0) != length) return;
                     int rel = fileIO.write((char *) buffer, DataEnc::headerSize(), length);
-//                    int rel = length;
                     totalRecv += rel;
                     int progeress = (int) (totalRecv * 100.0F / iterator->fileSize);
                     if (p != progeress) {
                         printf("progeress:%d\n", progeress);
                         p = progeress;
                     }
-                } else if (rCmd == FS_END) {
+                } else if (rCmd == FS_END) { // 传输完毕
                     break;
                 } else {  // 关闭传输
                     totalRecv = 0;
@@ -130,7 +138,7 @@ pthread_mutex_t mMapMutex;
 
 void LANShare::scannDevice(LANShare *lanShare) {
     mbyte buffer[2048];
-    while (true) {
+    while (lanShare->isRun) {
         DataEnc dataEnc(buffer, 2048);
         dataEnc.setCmd(UDP_GET_DEVICES);
         dataEnc.putString(lanShare->getMDevice()->getDevIp());
@@ -158,17 +166,22 @@ void LANShare::scannDevice(LANShare *lanShare) {
     }
 }
 
+
+//
+
 void LANShare::runRecive(LANShare *lanShare) {
     UDPServer server(DEFAULT_UDPPORT);
-    mbyte *buffer = new mbyte[2048];
-    sockaddr_in clientAddr;
-    while (true) {
-        int len = server.recv(&clientAddr, buffer, 2048);
+    mbyte *buffer = new mbyte[4096];
+    sockaddr_in clientAddr{};
+    while (lanShare->isRun) {
+        int len = server.recv(&clientAddr, buffer, 4096);
         if (len <= 0) {
+            printf("runRecive recv len is <= 0");
             break;
         }
         DataDec dataDec(buffer, len);
         int cmd = dataDec.getCmd();
+//        printf("cmd: %d\n", cmd);
         if (cmd == UDP_SET_DEVICES) {
             int port = dataDec.getInt();
             char *ip = dataDec.getStr();
@@ -211,9 +224,21 @@ void LANShare::runRecive(LANShare *lanShare) {
             server.send(&clientAddr1, dataEnc.getData(), dataEnc.getDataLen());
 
             delete ip;
+        } else if (cmd == UDP_DEVICES_MESSAGE) {
+            char *ip = dataDec.getStr();
+            if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
+            char *devName = dataDec.getStr();
+            char *message = dataDec.getStr();
+            char *gbkMessage = CodeUtils::UTFToGBK(message);
+            printf("devName: %s message:%s\n", devName, gbkMessage);
+            delete ip;
+            delete devName;
+            delete message;
+            delete gbkMessage;
         }
     }
 }
+
 
 void LANShare::createTcpServer() {
     TCPServer tcpServer(DEFAULT_TCPPORT);

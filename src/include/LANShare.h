@@ -14,6 +14,8 @@
 #define UDP_GET_DEVICES  1001       // 获取设备
 #define UDP_SET_DEVICES  1002       // 设置设备
 #define UDP_DEVICES_OFF_LINE 1003   // 设备下线
+#define UDP_DEVICES_MESSAGE  1004    // 广播消息
+
 // 文件服务命令
 #define FS_SHARE_FILE  1101    // 发送文件
 #define FS_AGREE  1102         // 同意
@@ -47,6 +49,7 @@ public:
     map <string, Device> onLineDevices;
     // 自己设备信息
     Device *mDevice;
+    bool isRun = true;
 
     Device *getMDevice() const;
 

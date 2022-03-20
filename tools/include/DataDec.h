@@ -38,6 +38,7 @@ public:
     mlong getLong();                   //获取一个long
     mbyte getByte();                   //获取一个byte
     bool getBool();                   //获取一个byte
+    int getStrLen();                   //获取接下来的字符串长度
     char *getStr();                   //获取字符 字符内存空间为new 需要自行清理
     string getString();                   //获取字符 字符内存空间为new 需要自行清理
     void getStr(char *buff);                    //获取下标的字符
