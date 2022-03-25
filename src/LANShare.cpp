@@ -19,7 +19,7 @@ using namespace std;
 LANShare::LANShare() {
     // 测试客户端数据
     mDevice = new Device();
-    mDevice->setDevIp("192.168.31.231");
+    mDevice->setDevIp("192.168.1.105");
     mDevice->setDevPort(DEFAULT_TCPPORT);
     mDevice->setDevName("Win Test Client");
     mDevice->setDevMode(Device::L_WIN);
@@ -132,7 +132,7 @@ void LANShare::handelFile(TCPClient *client) {
     return;
 }
 
-const char *lanIp = "192.168.31.255";
+const char *lanIp = "192.168.1.255";
 
 pthread_mutex_t mMapMutex;
 
