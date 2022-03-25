@@ -5,6 +5,7 @@
 #ifndef LANSHARE_LANSHARE_H
 #define LANSHARE_LANSHARE_H
 
+#include "UDPServer.h"
 #include "TCPClient.h"
 #include "Device.h"
 #include <list>
@@ -15,7 +16,7 @@
 #define UDP_SET_DEVICES  1002       // 设置设备
 #define UDP_DEVICES_OFF_LINE 1003   // 设备下线
 #define UDP_DEVICES_MESSAGE  1004    // 广播消息
-
+#define UDP_DEVICES_MESSAGE_TO_CLIPBOARD  1005  // 广播消息到剪切板
 // 文件服务命令
 #define FS_SHARE_FILE  1101    // 发送文件
 #define FS_AGREE  1102         // 同意
@@ -50,6 +51,7 @@ public:
     // 自己设备信息
     Device *mDevice;
     bool isRun = true;
+    UDPServer *server;
 
     Device *getMDevice() const;
 
@@ -64,6 +66,8 @@ public:
     static void scannDevice(LANShare *lanShare);
 
     static void handelFile(TCPClient *client);
+
+    void broadcastMessage(Device *device, string message,bool isClip);
 };
 
 #endif //LANSHARE_LANSHARE_H

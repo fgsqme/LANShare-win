@@ -3,7 +3,6 @@
 #include <thread>
 #include "DataDec.h"
 #include "DataEnc.h"
-#include "UDPServer.h"
 #include "UDPClient.h"
 #include "TCPServer.h"
 #include "LANShare.h"
@@ -11,6 +10,7 @@
 #include "NetWorldUtils.h"
 #include "TimeTools.h"
 #include "CodeUtils.h"
+#include "Utils.h"
 
 #define BUFF_SIZE 1024 * 1024 * 2
 using namespace std;
@@ -23,9 +23,12 @@ LANShare::LANShare() {
     mDevice->setDevPort(DEFAULT_TCPPORT);
     mDevice->setDevName("Win Test Client");
     mDevice->setDevMode(Device::L_WIN);
+
+    server = new UDPServer((DEFAULT_UDPPORT));
 }
 
 LANShare::~LANShare() {
+    delete server;
     delete mDevice;
 }
 
@@ -53,7 +56,7 @@ void LANShare::handelFile(TCPClient *client) {
 
         printf("ip:%s:%d name:%s\n", ip, port, name);
 
-        list<MFile> files;
+        list <MFile> files;
 
         for (int i = 0; i < count; i++) {
             if (client->recvo(buffer, 0, DataEnc::headerSize(), 0) != DataEnc::headerSize()) return;
@@ -64,19 +67,18 @@ void LANShare::handelFile(TCPClient *client) {
             long fileSize = dataDec.getLong();
             // 文件名称
             char *strFilename = dataDec.getStr();
-            char *fileName = CodeUtils::UTFToGBK(strFilename);
+            string fileName = CodeUtils::UTFToGBK(strFilename);
             delete strFilename;
 
             int fileType = dataDec.getInt();
             char *videoTime = dataDec.getStr();
 
-            printf("fileType:%d fileName:%s  fileSize:%ld\n", fileType, fileName, fileSize);
+            printf("fileType:%d fileName:%s  fileSize:%ld\n", fileType, fileName.c_str(), fileSize);
 
             MFile mFile{fileName, fileSize};
             files.push_back(mFile);
 
             delete videoTime;
-            delete fileName;
         }
 
         DataEnc dataEnc(buffer, BUFF_SIZE);
@@ -170,11 +172,11 @@ void LANShare::scannDevice(LANShare *lanShare) {
 //
 
 void LANShare::runRecive(LANShare *lanShare) {
-    UDPServer server(DEFAULT_UDPPORT);
+
     mbyte *buffer = new mbyte[4096];
     sockaddr_in clientAddr{};
     while (lanShare->isRun) {
-        int len = server.recv(&clientAddr, buffer, 4096);
+        int len = lanShare->server->recv(&clientAddr, buffer, 4096);
         if (len <= 0) {
             printf("runRecive recv len is <= 0");
             break;
@@ -182,7 +184,7 @@ void LANShare::runRecive(LANShare *lanShare) {
         DataDec dataDec(buffer, len);
         int cmd = dataDec.getCmd();
 //        printf("cmd: %d\n", cmd);
-        if (cmd == UDP_SET_DEVICES) {
+        if (cmd == UDP_SET_DEVICES) {  // 添加或覆盖设备
             int port = dataDec.getInt();
             char *ip = dataDec.getStr();
             char *devName = dataDec.getStr();
@@ -205,7 +207,7 @@ void LANShare::runRecive(LANShare *lanShare) {
             //  printf("device on line ip:%s:%d devName:%s devModel:%d\n", ip, port, devName, devModel);
             delete ip;
             delete devName;
-        } else if (cmd == UDP_GET_DEVICES) {
+        } else if (cmd == UDP_GET_DEVICES) { //获取设备命令
             char *ip = dataDec.getStr();
 //            printf("recv ip:%s\n", ip);
             DataEnc dataEnc(buffer, 2048);
@@ -216,25 +218,42 @@ void LANShare::runRecive(LANShare *lanShare) {
             dataEnc.putString(lanShare->getMDevice()->getDevName());
             dataEnc.putInt(lanShare->getMDevice()->getDevMode());
 
-            sockaddr_in clientAddr1{};
-            clientAddr1.sin_family = AF_INET;
-            clientAddr1.sin_port = htons(DEFAULT_UDPPORT);
-            clientAddr1.sin_addr.s_addr = inet_addr(ip);
-
-            server.send(&clientAddr1, dataEnc.getData(), dataEnc.getDataLen());
+            lanShare->server->sendto(ip, DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
 
             delete ip;
-        } else if (cmd == UDP_DEVICES_MESSAGE) {
+        } else if (cmd == UDP_DEVICES_MESSAGE) { // 消息
             char *ip = dataDec.getStr();
             if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
             char *devName = dataDec.getStr();
             char *message = dataDec.getStr();
-            char *gbkMessage = CodeUtils::UTFToGBK(message);
-            printf("devName: %s message:%s\n", devName, gbkMessage);
+            string gbkMessage = CodeUtils::UTFToGBK(message);
+
+            printf("devName: %s message:%s\n", devName, gbkMessage.c_str());
+            // 弹窗
+            // MessageBox(nullptr, gbkMessage.c_str(), "", MB_OK);
+
             delete ip;
             delete devName;
             delete message;
-            delete gbkMessage;
+        } else if (cmd == UDP_DEVICES_MESSAGE_TO_CLIPBOARD) { // 消息写入剪切板
+            char *ip = dataDec.getStr();
+            if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
+            char *devName = dataDec.getStr();
+            char *message = dataDec.getStr();
+            string gbkMessage = CodeUtils::UTFToGBK(message);
+
+            printf("devName: %s clip message:%s\n", devName, gbkMessage.c_str());
+
+            // 把文本写进剪切板
+            if (Utils::SetClipboardText(gbkMessage.c_str())) {
+                puts("  写入剪切板成功");
+            } else {
+                puts("  写入剪切板失败");
+            }
+
+            delete ip;
+            delete devName;
+            delete message;
         }
     }
 }
@@ -254,6 +273,40 @@ void LANShare::createTcpServer() {
 
 Device *LANShare::getMDevice() const {
     return mDevice;
+}
+
+void LANShare::broadcastMessage(Device *device, string message, bool isClip) {
+    int strlen = CodeUtils::getUtf8StrLen(message.c_str());
+    if (strlen <= 0) {
+        return;
+    }
+
+    if (strlen > 700) {
+        puts("字符长度不能超过700");
+        return;
+    }
+
+    int buffLen = 1024 + message.size();
+    auto *buffer = new mbyte[buffLen];
+
+    DataEnc dataEnc(buffer, buffLen);
+    dataEnc.setCmd(isClip ? UDP_DEVICES_MESSAGE_TO_CLIPBOARD : UDP_DEVICES_MESSAGE);
+    dataEnc.putString(mDevice->getDevIp());
+    dataEnc.putString(mDevice->getDevName());
+    dataEnc.putString(message);
+
+    if (device == nullptr) {
+        pthread_mutex_lock(&mMapMutex);
+        map<string, Device>::iterator iter;
+        for (iter = onLineDevices.begin(); iter != onLineDevices.end(); iter++) {
+            server->sendto(iter->second.getDevIp().c_str(), DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
+        }
+        pthread_mutex_unlock(&mMapMutex);
+    } else {
+        server->sendto(device->getDevIp().c_str(), DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
+    }
+    delete[] buffer;
+
 }
 
 

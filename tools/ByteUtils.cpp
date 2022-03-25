@@ -30,7 +30,7 @@ int ByteUtils::bytesToInt(mbyte *buf, int offset) {
 }
 
 /*
- * long转byte[]
+ * longתbyte[]
  */
 
 void ByteUtils::longToBytes(mlong i, mbyte *b, int index) {

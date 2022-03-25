@@ -18,7 +18,9 @@ public:
 
     ~UDPServer();
 
-    ssize_t send(sockaddr_in *src_addr, const void *buff, size_t len, int flag = 0);
+    ssize_t sendto(sockaddr_in *src_addr, const void *buff, size_t len, int flag = 0);
+
+    ssize_t sendto(const char *ip, int clientPort, const void *buff, size_t len, int flag = 0);
 
     ssize_t recv(void *buff, size_t len, int flag = 0);
 

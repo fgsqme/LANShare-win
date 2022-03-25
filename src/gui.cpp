@@ -1,68 +1,95 @@
-// 待开发.....
-
 #include <windows.h>
+#include <iostream>
+#include <sys/stat.h>
+#include <shellapi.h>
+#include "CodeUtils.h"
 
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+using namespace std;
 
-int WINAPI WinMain(HINSTANCE hInstance,
-                   HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine,
-                   int nShowCmd) {
-    HWND hwnd; // 定义窗口句柄
-    MSG msg;   // 定义一个用来存储消息的变量
-    TCHAR lpszClassName[] = TEXT("windows");
+//显示消息
+void show(string str);
 
-    WNDCLASS wc; // 定义一个窗口类变量
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = WndProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = ::LoadIcon(nullptr, IDI_APPLICATION);
-    wc.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH) ::GetStockObject(WHITE_BRUSH);
-    wc.lpszMenuName = nullptr;
-    wc.lpszClassName = lpszClassName;
+//获取剪切板内容
+string getPlateStr();
 
-    ::RegisterClass(&wc);                 // 注册窗口
+//根据文件路径获取所在文件夹的路径
+string getFileDir(string path);
 
-    hwnd = CreateWindow(lpszClassName,    // 创建窗口
-                        TEXT("win"),
-                        WS_OVERLAPPEDWINDOW,
-                        120, 50, 800, 600,
-                        nullptr,
-                        nullptr,
-                        hInstance,
-                        nullptr);
+//判断是否为文件
+bool isFile(string path);
 
-    ::ShowWindow(hwnd, SW_SHOWNORMAL);        // 显示窗口
-    ::UpdateWindow(hwnd);
+//判断是否为文件夹
+bool isDir(string path);
 
-    while (::GetMessage(&msg, nullptr, 0, 0))       // 消息循环
-    {
-        ::TranslateMessage(&msg);
-        ::DispatchMessage(&msg);
+//运行程序或路径
+void execute(string s);
+
+
+int WINAPI WinMain(
+        HINSTANCE hInstance,       //程序当前实例的句柄，以后随时可以用GetModuleHandle(0)来获得
+        HINSTANCE hPrevInstance,   //这个参数在Win32环境下总是0，已经废弃不用了
+        char *lpCmdLine,          //指向以/0结尾的命令行，不包括EXE本身的文件名，
+        //以后随时可以用GetCommandLine()来获取完整的命令行
+        int nCmdShow               //指明应该以什么方式显示主窗口
+) {
+    string plateStr = getPlateStr();
+    show(plateStr);
+    if (isDir(plateStr)) {
+        execute(plateStr);
     }
-    return msg.wParam;
-}
-
-
-// 处理消息的窗口函数
-LRESULT CALLBACK WndProc(HWND hwnd,
-                         UINT message,
-                         WPARAM wParam,
-                         LPARAM lParam) {
-    switch (message) {
-        case WM_LBUTTONDOWN:    // 鼠标左键下消息
-        {
-            ::MessageBeep(0); // 可以发出声音的API函数
-        }
-            break;
-        case WM_DESTROY:
-            ::PostQuitMessage(0);
-            break;
-        default:
-            return ::DefWindowProc(hwnd, message, wParam, lParam);
+    if (isFile(plateStr)) {
+        execute(getFileDir(plateStr));
     }
     return 0;
+}
+
+//显示消息
+void show(string str) {
+    MessageBox(nullptr, str.c_str(), "", MB_OK);
+}
+
+//判断是否为文件夹
+bool isDir(string path) {
+    struct _stat buf = {0};
+    _stat(path.c_str(), &buf);
+    return buf.st_mode & _S_IFDIR;
+}
+
+//判断是否为文件
+bool isFile(string path) {
+    struct _stat buf = {0};
+    _stat(path.c_str(), &buf);
+    return buf.st_mode & _S_IFREG;
+}
+
+//根据文件路径获取所在文件夹的路径
+string getFileDir(string path) {
+    int i = path.find_last_of('\\');
+    std::string p2 = path.substr(0, i);
+    MessageBox(nullptr, (const char *) p2.c_str(), "", MB_OK);
+    return p2.c_str();
+}
+
+//获取剪切板内容
+string getPlateStr() {
+    if (OpenClipboard(nullptr)) {
+        if (IsClipboardFormatAvailable(CF_TEXT)) {
+            HGLOBAL hGlobal = ::GetClipboardData(CF_UNICODETEXT);
+            auto *pGlobal = (wchar_t *) ::GlobalLock(hGlobal);
+            CloseClipboard();
+            return CodeUtils::WcharToChar(pGlobal);
+        }
+    }
+    return "";
+}
+
+//运行程序或路径
+void execute(std::string s) {
+    ShellExecute(
+            nullptr,
+            ("open"),
+            ("Explorer.exe"),
+            (s.c_str()),
+            nullptr,
+            SW_SHOWDEFAULT);
 }

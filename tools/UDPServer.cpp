@@ -53,7 +53,16 @@ UDPServer::UDPServer(int port) : port(port) {
     }
 }
 
-ssize_t UDPServer::send(CLIENT_ADDR *src_addr, const void *buff, size_t len, int flag) {
+ssize_t UDPServer::sendto(const char *ip, int clientPort, const void *buff, size_t len, int flag) {
+    sockaddr_in clientAddr{};
+    clientAddr.sin_family = AF_INET;
+    clientAddr.sin_port = htons(clientPort);
+    clientAddr.sin_addr.s_addr = inet_addr(ip);
+    return sendto(&clientAddr, buff, len, flag);
+}
+
+
+ssize_t UDPServer::sendto(CLIENT_ADDR *src_addr, const void *buff, size_t len, int flag) {
     return ::sendto(udp_fd, static_cast<const char *>(buff), len, flag, (sockaddr *) src_addr, addr_len);
 }
 
@@ -124,5 +133,6 @@ ssize_t UDPServer::close() {
     return ::close(udp_fd);
 #endif
 }
+
 
 
