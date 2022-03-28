@@ -11,7 +11,7 @@ using namespace std;
 
 class NetWorldUtils {
 public:
-    // 鑾峰彇鏈満IP
+    // 获取本机IP
     static string getLocalIP();
 
     static string getHostNameIP(string hostname);

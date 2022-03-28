@@ -11,10 +11,10 @@
 class TimeTools {
 public:
     static void getFormatTime(char *str_time);
-    static void sleep_s(int s);               //æ¯«ç§’å»¶æ—¶
-    static void sleep_ms(int ms);               //æ¯«ç§’å»¶æ—¶
-    static void sleep_us(int us);               //å¾®ç§’å»¶æ—¶
-    static mlong getCurrentTime();           //è·å–ç³»ç»Ÿæ—¶é—´
+    static void sleep_s(int s);               //ºÁÃëÑÓÊ±
+    static void sleep_ms(int ms);               //ºÁÃëÑÓÊ±
+    static void sleep_us(int us);               //Î¢ÃëÑÓÊ±
+    static mlong getCurrentTime();           //»ñÈ¡ÏµÍ³Ê±¼ä
 };
 
 

@@ -11,28 +11,28 @@
 using namespace std;
 
 
+
 int main() {
     LANShare lanShare;
-    // TCP æ–‡ä»¶æ¥æ”¶çº¿ç¨‹
+    // TCP ÎÄ¼ş½ÓÊÕÏß³Ì
     thread tTcpServer(LANShare::createTcpServer);
-    // UDP æ¥æ”¶å‘½ä»¤çº¿ç¨‹
+    // UDP ½ÓÊÕÃüÁîÏß³Ì
     thread tRunRecive(LANShare::runRecive, &lanShare);
-    // æ‰«æè®¾å¤‡çº¿ç¨‹
+    // É¨ÃèÉè±¸Ïß³Ì
     thread tScannDevice(LANShare::scannDevice, &lanShare);
     char buffer[2048];
 
     sleep(1);
 
     while (true) {
-        cout << "è¯·è¾“å…¥æ¶ˆæ¯:";
+        cout << "ÇëÊäÈëÏûÏ¢:";
         if (gets(buffer) != nullptr) {
             if (strcmp(buffer, "exit") == 0) {
                 break;
             }
-        }
-    }
             string str = CodeUtils::Gbk2Utf8(buffer);
             lanShare.broadcastMessage(nullptr, str, false);
-
+        }
+    }
     return 0;
 }

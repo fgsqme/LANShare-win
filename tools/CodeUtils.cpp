@@ -80,7 +80,7 @@ int CodeUtils::getUtf8StrLen(const char *str) {
             sptr += 3;
             ret++;
         } else {
-            // ç»Ÿä¸€4ä¸ªå­—èŠ‚
+            // Í³Ò»4¸ö×Ö½Ú
             sptr += 4;
             ret++;
         }
@@ -91,16 +91,16 @@ int CodeUtils::getUtf8StrLen(const char *str) {
 
 
 int CodeUtils::getGbkStrLen(const char *str) {
-    const char *p = str;        //pç”¨äºåé¢éå†
-    while (*p)                    //è‹¥æ˜¯ç»“æŸç¬¦0ï¼Œåˆ™ç»“æŸå¾ªç¯
+    const char *p = str;        //pÓÃÓÚºóÃæ±éÀú
+    while (*p)                    //ÈôÊÇ½áÊø·û0£¬Ôò½áÊøÑ­»·
     {
-        if (*p < 0 && (*(p + 1) < 0 || *(p + 1) < 63))            //ä¸­æ–‡æ±‰å­—æƒ…å†µ
+        if (*p < 0 && (*(p + 1) < 0 || *(p + 1) < 63))            //ÖĞÎÄºº×ÖÇé¿ö
         {
-            str++;                //strç§»åŠ¨ä¸€ä½ï¼Œpç§»åŠ¨ç§»åŠ¨2ä½ï¼Œå› æ­¤é•¿åº¦åŠ 1
+            str++;                //strÒÆ¶¯Ò»Î»£¬pÒÆ¶¯ÒÆ¶¯2Î»£¬Òò´Ë³¤¶È¼Ó1
             p += 2;
         } else {
-            p++;                //strä¸åŠ¨ï¼Œpç§»åŠ¨ä¸€ä½ï¼Œé•¿åº¦åŠ 1
+            p++;                //str²»¶¯£¬pÒÆ¶¯Ò»Î»£¬³¤¶È¼Ó1
         }
     }
-    return p - str;                //è¿”å›åœ°å€ä¹‹å·®
+    return p - str;                //·µ»ØµØÖ·Ö®²î
 }

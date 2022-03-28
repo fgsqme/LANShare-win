@@ -19,11 +19,11 @@ public:
     static const int L_MAC = 4;
     static const int L_IOS = 5;
 private:
-    string devName; // è®¾å¤‡åç§°
-    string devIP;   // è®¾å¤‡TCPæ¥æ”¶æ–‡ä»¶IP
-    int devPort;    // è®¾å¤‡TCPæ¥æ”¶æ–‡ä»¶ç«¯å£
-    int devMode;    // è®¾å¤‡ä»£å·
-    mlong setTime;   // æœ€åå¿ƒè·³æ—¶é—´
+    string devName; // Éè±¸Ãû³Æ
+    string devIP;   // Éè±¸TCP½ÓÊÕÎÄ¼şIP
+    int devPort;    // Éè±¸TCP½ÓÊÕÎÄ¼ş¶Ë¿Ú
+    int devMode;    // Éè±¸´úºÅ
+    mlong setTime;   // ×îºóĞÄÌøÊ±¼ä
 public:
 
 

@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 class DataDec {
 private:
     static const int HEADER_LEN = 12;
@@ -34,31 +35,31 @@ public:
 
     void setData(mbyte *bytes, int bytelens);
 
-    int getInt();                      //è·å–ä¸€ä¸ªint
-    mlong getLong();                   //è·å–ä¸€ä¸ªlong
-    mbyte getByte();                   //è·å–ä¸€ä¸ªbyte
-    bool getBool();                   //è·å–ä¸€ä¸ªbyte
-    int getStrLen();                   //è·å–æ¥ä¸‹æ¥çš„å­—ç¬¦ä¸²é•¿åº¦
-    char *getStr();                   //è·å–å­—ç¬¦ å­—ç¬¦å†…å­˜ç©ºé—´ä¸ºnew éœ€è¦è‡ªè¡Œæ¸…ç†
-    string getString();                   //è·å–å­—ç¬¦ å­—ç¬¦å†…å­˜ç©ºé—´ä¸ºnew éœ€è¦è‡ªè¡Œæ¸…ç†
-    void getStr(char *buff);                    //è·å–ä¸‹æ ‡çš„å­—ç¬¦
+    int getInt();                      //»ñÈ¡Ò»¸öint
+    mlong getLong();                   //»ñÈ¡Ò»¸ölong
+    mbyte getByte();                   //»ñÈ¡Ò»¸öbyte
+    bool getBool();                   //»ñÈ¡Ò»¸öbyte
+    int getStrLen();                   //»ñÈ¡½ÓÏÂÀ´µÄ×Ö·û´®³¤¶È
+    char *getStr();                   //»ñÈ¡×Ö·û ×Ö·ûÄÚ´æ¿Õ¼äÎªnew ĞèÒª×ÔĞĞÇåÀí
+    string getString();                   //»ñÈ¡×Ö·û ×Ö·ûÄÚ´æ¿Õ¼äÎªnew ĞèÒª×ÔĞĞÇåÀí
+    void getStr(char *buff);                    //»ñÈ¡ÏÂ±êµÄ×Ö·û
     mbyte *getSurplusBytes();
 
     void getSurplusBytes(mbyte *buff);
 
-    float getFloat();                  //è·å–ä¸€ä¸ªfloat
-    double getDouble();                //è·å–ä¸€ä¸ªdouble
+    float getFloat();                  //»ñÈ¡Ò»¸öfloat
+    double getDouble();                //»ñÈ¡Ò»¸ödouble
 
-    int getInt(int i);                      //è·å–ä¸‹æ ‡çš„int
-    mlong getLong(int i);                   //è·å–ä¸‹æ ‡çš„long
-    mbyte getByte(int i);                   //è·å–ä¸‹æ ‡çš„byte
-    char *getStr(int i);                    //è·å–ä¸‹æ ‡çš„å­—ç¬¦ å­—ç¬¦å†…å­˜ç©ºé—´ä¸ºnew éœ€è¦è‡ªè¡Œæ¸…ç†
-    float getFloat(int i);                  //è·å–ä¸‹æ ‡çš„float
-    double getDouble(int i);                //è·å–ä¸‹æ ‡çš„double
+    int getInt(int i);                      //»ñÈ¡ÏÂ±êµÄint
+    mlong getLong(int i);                   //»ñÈ¡ÏÂ±êµÄlong
+    mbyte getByte(int i);                   //»ñÈ¡ÏÂ±êµÄbyte
+    char *getStr(int i);                    //»ñÈ¡ÏÂ±êµÄ×Ö·û ×Ö·ûÄÚ´æ¿Õ¼äÎªnew ĞèÒª×ÔĞĞÇåÀí
+    float getFloat(int i);                  //»ñÈ¡ÏÂ±êµÄfloat
+    double getDouble(int i);                //»ñÈ¡ÏÂ±êµÄdouble
 
-    static int headerSize();            //å¤´å¤§å°
-    void reset();                       //é‡ç½®è¯»å–ä¸‹æ ‡
-    void skip(int off);                 //åç§»è¯»å–ä¸‹æ ‡
+    static int headerSize();            //Í·´óĞ¡
+    void reset();                       //ÖØÖÃ¶ÁÈ¡ÏÂ±ê
+    void skip(int off);                 //Æ«ÒÆ¶ÁÈ¡ÏÂ±ê
     int getDataIndex() const;
 
     void setDataIndex(int i);

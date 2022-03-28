@@ -1,19 +1,20 @@
 #pragma once
 
 #if defined(WIN32) || defined(_WIN32) || defined(_WIN32_) || defined(WIN64) || defined(_WIN64) || defined(_WIN64_)
-#define PLATFORM_WINDOWS 1 //Windowså¹³å°
+#define PLATFORM_WINDOWS 1 //WindowsÆ½Ì¨
 #define PATH_E '\\'
+
 #include <direct.h>
 
 #elif defined(ANDROID) || defined(_ANDROID_)
 #define PATH_E '/'
 #include <sys/stat.h>
 #include <unistd.h>
-#define PLATFORM_ANDROID 1 //Androidå¹³å°
+#define PLATFORM_ANDROID 1 //AndroidÆ½Ì¨
 #define PATH_E '/'
 #elif defined(__linux__)
 #define PATH_E '/'
-#define PLATFORM_LINUX	 1 //Linuxå¹³å°
+#define PLATFORM_LINUX	 1 //LinuxÆ½Ì¨
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstring>
@@ -37,14 +38,25 @@ typedef unsigned char UTF8;
 typedef unsigned short UTF16;
 typedef unsigned int UTF32;
 
-// 3Dç»“æ„ä½“
+typedef union {
+    mlong bits;
+    double d;
+} Double;
+
+typedef union {
+    unsigned int bits;
+    float f;
+} Float;
+
+
+// 3D½á¹¹Ìå
 struct C3D {
     float x;
     float y;
     float z;
 };
 
-// 2Dç»“æ„ä½“
+// 2D½á¹¹Ìå
 struct C2D {
     float x;
     float y;
@@ -53,8 +65,8 @@ struct C2D {
 };
 
 struct RADDR {
-    Addr addr;                    // èµ·å§‹åœ°å€
-    Addr taddr;                   // ç»“æŸåœ°å€
+    Addr addr;                    // ÆğÊ¼µØÖ·
+    Addr taddr;                   // ½áÊøµØÖ·
 };
 
 

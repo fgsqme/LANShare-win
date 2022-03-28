@@ -24,7 +24,7 @@
 #endif
 
 
-void TimeTools::getFormatTime(char *str_time) //è·å–æ ¼å¼åŒ–æ—¶é—´
+void TimeTools::getFormatTime(char *str_time) //»ñÈ¡¸ñÊ½»¯Ê±¼ä
 {
     time_t now;
     struct tm *tm_now;
@@ -39,7 +39,7 @@ void TimeTools::sleep_s(int s) {
     ::sleep(s);
 }
 
-/* æ¯«ç§’çº§ å»¶æ—¶ */
+/* ºÁÃë¼¶ ÑÓÊ± */
 void TimeTools::sleep_ms(int ms) {
     struct timeval delay;
     delay.tv_sec = 0;
@@ -47,7 +47,7 @@ void TimeTools::sleep_ms(int ms) {
     select(0, nullptr, nullptr, nullptr, &delay);
 }
 
-/* å¾®å¦™çº§ å»¶æ—¶ */
+/* Î¢Ãî¼¶ ÑÓÊ± */
 void TimeTools::sleep_us(int us) {
     struct timeval delay;
     delay.tv_sec = 0;
@@ -56,7 +56,7 @@ void TimeTools::sleep_us(int us) {
 }
 
 
-//è·å–ç³»ç»Ÿæ—¶é—´
+//»ñÈ¡ÏµÍ³Ê±¼ä
 mlong TimeTools::getCurrentTime() {
 
 
@@ -65,7 +65,7 @@ mlong TimeTools::getCurrentTime() {
     timeb now;
     ftime(&now);
     std::stringstream milliStream;
-    // ç”±äºæ¯«ç§’æ•°ä¸ä¸€å®šæ˜¯ä¸‰ä½æ•°ï¼Œæ•…è®¾ç½®å®½åº¦ä¸º3ï¼Œå‰é¢è¡¥0
+    // ÓÉÓÚºÁÃëÊı²»Ò»¶¨ÊÇÈıÎ»Êı£¬¹ÊÉèÖÃ¿í¶ÈÎª3£¬Ç°Ãæ²¹0
     milliStream << setw(3) << setfill('0') << right << now.millitm;
 
     stringstream secStream;

@@ -11,14 +11,12 @@ void ByteUtils::ByteArrCopy(const mbyte *d, int d_index, mbyte *t, int t_index, 
     }
 }
 
-
 void ByteUtils::intToBytes(int i, mbyte *b, int index) {
     b[0 + index] = (mbyte) ((i >> 24) & 0xFF);
     b[1 + index] = (mbyte) ((i >> 16) & 0xFF);
     b[2 + index] = (mbyte) ((i >> 8) & 0xFF);
     b[3 + index] = (mbyte) (i & 0xFF);
 }
-
 
 int ByteUtils::bytesToInt(mbyte *buf, int offset) {
     int i = 0;
@@ -30,7 +28,7 @@ int ByteUtils::bytesToInt(mbyte *buf, int offset) {
 }
 
 /*
- * longתbyte[]
+ * long to byte[]
  */
 
 void ByteUtils::longToBytes(mlong i, mbyte *b, int index) {

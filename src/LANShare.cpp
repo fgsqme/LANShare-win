@@ -14,12 +14,13 @@
 
 #define BUFF_SIZE 1024 * 1024 * 2
 using namespace std;
+const char *lanIp = "192.168.31.255";
 
 
 LANShare::LANShare() {
-    // æµ‹è¯•å®¢æˆ·ç«¯æ•°æ®
+    // ²âÊÔ¿Í»§¶ËÊı¾İ
     mDevice = new Device();
-    mDevice->setDevIp("192.168.1.105");
+    mDevice->setDevIp("192.168.31.231");
     mDevice->setDevPort(DEFAULT_TCPPORT);
     mDevice->setDevName("Win Test Client");
     mDevice->setDevMode(Device::L_WIN);
@@ -65,7 +66,7 @@ void LANShare::handelFile(TCPClient *client) {
             dataDec.setData(buffer, DataEnc::headerSize() + length);
 
             long fileSize = dataDec.getLong();
-            // æ–‡ä»¶åç§°
+            // ÎÄ¼şÃû³Æ
             char *strFilename = dataDec.getStr();
             string fileName = CodeUtils::UTFToGBK(strFilename);
             delete strFilename;
@@ -85,7 +86,7 @@ void LANShare::handelFile(TCPClient *client) {
         dataEnc.setCmd(FS_AGREE);
         client->send(dataEnc.getData(), dataEnc.getDataLen());
 
-        // éœ€è¦æ‰‹åŠ¨åˆ›å»ºæ–‡ä»¶å¤¹
+        // ĞèÒªÊÖ¶¯´´½¨ÎÄ¼ş¼Ğ
         string path = "D:\\LANShare\\";
 //        string path = "/sdcard/LANShare/";
 
@@ -111,9 +112,9 @@ void LANShare::handelFile(TCPClient *client) {
                         printf("progeress:%d\n", progeress);
                         p = progeress;
                     }
-                } else if (rCmd == FS_END) { // ä¼ è¾“å®Œæ¯•
+                } else if (rCmd == FS_END) { // ´«ÊäÍê±Ï
                     break;
-                } else {  // å…³é—­ä¼ è¾“
+                } else {  // ¹Ø±Õ´«Êä
                     totalRecv = 0;
                     break;
                 }
@@ -134,7 +135,6 @@ void LANShare::handelFile(TCPClient *client) {
     return;
 }
 
-const char *lanIp = "192.168.1.255";
 
 pthread_mutex_t mMapMutex;
 
@@ -163,7 +163,7 @@ void LANShare::scannDevice(LANShare *lanShare) {
         }
         pthread_mutex_unlock(&mMapMutex);
         sleep(5);
-        // æ‰“å°å½“å‰è®¾å¤‡æ•°
+        // ´òÓ¡µ±Ç°Éè±¸Êı
         // printf("device count:%d\n", lanShare->onLineDevices.size());
     }
 }
@@ -184,13 +184,13 @@ void LANShare::runRecive(LANShare *lanShare) {
         DataDec dataDec(buffer, len);
         int cmd = dataDec.getCmd();
 //        printf("cmd: %d\n", cmd);
-        if (cmd == UDP_SET_DEVICES) {  // æ·»åŠ æˆ–è¦†ç›–è®¾å¤‡
+        if (cmd == UDP_SET_DEVICES) {  // Ìí¼Ó»ò¸²¸ÇÉè±¸
             int port = dataDec.getInt();
             char *ip = dataDec.getStr();
             char *devName = dataDec.getStr();
             int devModel = dataDec.getInt();
 
-            // åˆ¤æ–­æ˜¯å¦ä¸ºè‡ªå·±å‘é€çš„æŒ‡ä»¤
+            // ÅĞ¶ÏÊÇ·ñÎª×Ô¼º·¢ËÍµÄÖ¸Áî
             if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
 
             Device device;
@@ -207,13 +207,13 @@ void LANShare::runRecive(LANShare *lanShare) {
             //  printf("device on line ip:%s:%d devName:%s devModel:%d\n", ip, port, devName, devModel);
             delete ip;
             delete devName;
-        } else if (cmd == UDP_GET_DEVICES) { //è·å–è®¾å¤‡å‘½ä»¤
+        } else if (cmd == UDP_GET_DEVICES) { //»ñÈ¡Éè±¸ÃüÁî
             char *ip = dataDec.getStr();
 //            printf("recv ip:%s\n", ip);
             DataEnc dataEnc(buffer, 2048);
             dataEnc.setCmd(UDP_SET_DEVICES);
             dataEnc.putInt(DEFAULT_TCPPORT);
-            // æ­¤å¤„è¦æ‰‹åŠ¨è¾“å…¥Win IP å› ä¸ºæš‚æ—¶è¿˜æ²¡æœ‰å®ç°è·å–Win IP çš„æ–¹æ³•
+            // ´Ë´¦ÒªÊÖ¶¯ÊäÈëWin IP ÒòÎªÔİÊ±»¹Ã»ÓĞÊµÏÖ»ñÈ¡Win IP µÄ·½·¨
             dataEnc.putString(lanShare->getMDevice()->getDevIp());
             dataEnc.putString(lanShare->getMDevice()->getDevName());
             dataEnc.putInt(lanShare->getMDevice()->getDevMode());
@@ -221,7 +221,7 @@ void LANShare::runRecive(LANShare *lanShare) {
             lanShare->server->sendto(ip, DEFAULT_UDPPORT, dataEnc.getData(), dataEnc.getDataLen());
 
             delete ip;
-        } else if (cmd == UDP_DEVICES_MESSAGE) { // æ¶ˆæ¯
+        } else if (cmd == UDP_DEVICES_MESSAGE) { // ÏûÏ¢
             char *ip = dataDec.getStr();
             if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
             char *devName = dataDec.getStr();
@@ -229,13 +229,13 @@ void LANShare::runRecive(LANShare *lanShare) {
             string gbkMessage = CodeUtils::UTFToGBK(message);
 
             printf("devName: %s message:%s\n", devName, gbkMessage.c_str());
-            // å¼¹çª—
+            // µ¯´°
             // MessageBox(nullptr, gbkMessage.c_str(), "", MB_OK);
 
             delete ip;
             delete devName;
             delete message;
-        } else if (cmd == UDP_DEVICES_MESSAGE_TO_CLIPBOARD) { // æ¶ˆæ¯å†™å…¥å‰ªåˆ‡æ¿
+        } else if (cmd == UDP_DEVICES_MESSAGE_TO_CLIPBOARD) { // ÏûÏ¢Ğ´Èë¼ôÇĞ°å
             char *ip = dataDec.getStr();
             if (strcmp(ip, lanShare->getMDevice()->getDevIp().c_str()) == 0) continue;
             char *devName = dataDec.getStr();
@@ -244,11 +244,11 @@ void LANShare::runRecive(LANShare *lanShare) {
 
             printf("devName: %s clip message:%s\n", devName, gbkMessage.c_str());
 
-            // æŠŠæ–‡æœ¬å†™è¿›å‰ªåˆ‡æ¿
+            // °ÑÎÄ±¾Ğ´½ø¼ôÇĞ°å
             if (Utils::SetClipboardText(gbkMessage.c_str())) {
-                puts("  å†™å…¥å‰ªåˆ‡æ¿æˆåŠŸ");
+                puts("  Ğ´Èë¼ôÇĞ°å³É¹¦");
             } else {
-                puts("  å†™å…¥å‰ªåˆ‡æ¿å¤±è´¥");
+                puts("  Ğ´Èë¼ôÇĞ°åÊ§°Ü");
             }
 
             delete ip;
@@ -282,7 +282,7 @@ void LANShare::broadcastMessage(Device *device, string message, bool isClip) {
     }
 
     if (strlen > 700) {
-        puts("å­—ç¬¦é•¿åº¦ä¸èƒ½è¶…è¿‡700");
+        puts("×Ö·û³¤¶È²»ÄÜ³¬¹ı700");
         return;
     }
 

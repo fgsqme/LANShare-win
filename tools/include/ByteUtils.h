@@ -18,6 +18,7 @@ public:
     static void longToBytes(mlong i, mbyte *b, int index = 0);
 
     static mlong bytesToLong(mbyte *buf, int offset);
+
 };
 
 

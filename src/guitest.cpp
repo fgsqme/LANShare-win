@@ -4,7 +4,7 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-TCHAR szAppName[] = TEXT ("记事本");
+TCHAR szAppName[] = TEXT ("���±�");
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    PSTR szCmdLine, int iCmdShow) {
@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     hwnd = CreateWindowEx(WS_EX_ACCEPTFILES, szAppName, szAppName,
                           WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT, CW_USEDEFAULT,
-                          700, 500,//设置宽和高
+                          700, 500,//���ÿ��͸�
                           NULL, NULL, hInstance, NULL);
 
     ShowWindow(hwnd, iCmdShow);
@@ -46,23 +46,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 VOID read_file(HWND hwnd, TCHAR *szFileName) {
-    TCHAR *chBuffer; //缓冲区
+    TCHAR *chBuffer; //������
     int file_size;
-    long dwReadSize = 0; //实际读取字符数
+    long dwReadSize = 0; //ʵ�ʶ�ȡ�ַ���
     HWND hEdit = GetDlgItem(hwnd, ID_EDIT);
-    HANDLE hFile = CreateFile(szFileName,     //创建文件的名称。
-                              GENERIC_READ,          // 读文件。
-                              0,                      // 不共享读写。
-                              NULL,                   // 缺省安全属性。
-                              OPEN_EXISTING,          // 如果文件存在。
-                              FILE_ATTRIBUTE_NORMAL, // 一般的文件。
-                              NULL);                 // 模板文件为空。
+    HANDLE hFile = CreateFile(szFileName,     //�����ļ������ơ�
+                              GENERIC_READ,          // ���ļ���
+                              0,                      // ��������д��
+                              NULL,                   // ȱʡ��ȫ���ԡ�
+                              OPEN_EXISTING,          // ����ļ����ڡ�
+                              FILE_ATTRIBUTE_NORMAL, // һ����ļ���
+                              NULL);                 // ģ���ļ�Ϊ�ա�
     if (hFile == INVALID_HANDLE_VALUE) {
         OutputDebugString(TEXT("CreateFile fail!\r\n"));
     }
 
     file_size = GetFileSize(hFile, NULL);
-    chBuffer = (TCHAR *) malloc(file_size * sizeof(TCHAR) + 1);//多分配一字符用于存储'\0'
+    chBuffer = (TCHAR *) malloc(file_size * sizeof(TCHAR) + 1);//�����һ�ַ����ڴ洢'\0'
     ReadFile(hFile, chBuffer, file_size, reinterpret_cast<LPDWORD>(&dwReadSize), NULL);
 
     chBuffer[file_size] = '\0';
@@ -72,12 +72,12 @@ VOID read_file(HWND hwnd, TCHAR *szFileName) {
 }
 
 VOID OnDropFiles(HWND hwnd, HDROP hDropInfo) {
-    //  UINT  nFileCount = DragQueryFile(hDropInfo, (UINT)-1, NULL, 0);  //查询一共拖拽了几个文件
+    //  UINT  nFileCount = DragQueryFile(hDropInfo, (UINT)-1, NULL, 0);  //��ѯһ����ק�˼����ļ�
     TCHAR szFileName[MAX_PATH] = TEXT("");
-    DragQueryFile(hDropInfo, 0, szFileName, sizeof(szFileName));  //打开拖拽的第一个(下标为0)文件
+    DragQueryFile(hDropInfo, 0, szFileName, sizeof(szFileName));  //����ק�ĵ�һ��(�±�Ϊ0)�ļ�
 
     read_file(hwnd, szFileName);
-    //完成拖入文件操作，系统释放缓冲区
+    //��������ļ�������ϵͳ�ͷŻ�����
     DragFinish(hDropInfo);
 }
 
@@ -99,7 +99,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             return 0;
 
         case WM_SIZE :
-            //设置子窗口的大小与父窗口相同
+            //�����Ӵ��ڵĴ�С�븸������ͬ
             MoveWindow(hwndEdit, 0, 0, LOWORD (lParam), HIWORD (lParam), TRUE);
             return 0;
 

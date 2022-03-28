@@ -10,7 +10,7 @@
 
 class Utils {
 public:
-    // å†™å…¥å‰ªåˆ‡æ¿
+    // Ğ´Èë¼ôÇĞ°å
     static bool SetClipboardText(const char *str);
 };
 

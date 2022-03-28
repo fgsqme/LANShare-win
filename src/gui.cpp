@@ -6,31 +6,31 @@
 
 using namespace std;
 
-//æ˜¾ç¤ºæ¶ˆæ¯
+//ÏÔÊ¾ÏûÏ¢
 void show(string str);
 
-//è·å–å‰ªåˆ‡æ¿å†…å®¹
+//»ñÈ¡¼ôÇĞ°åÄÚÈİ
 string getPlateStr();
 
-//æ ¹æ®æ–‡ä»¶è·¯å¾„è·å–æ‰€åœ¨æ–‡ä»¶å¤¹çš„è·¯å¾„
+//¸ù¾İÎÄ¼şÂ·¾¶»ñÈ¡ËùÔÚÎÄ¼ş¼ĞµÄÂ·¾¶
 string getFileDir(string path);
 
-//åˆ¤æ–­æ˜¯å¦ä¸ºæ–‡ä»¶
+//ÅĞ¶ÏÊÇ·ñÎªÎÄ¼ş
 bool isFile(string path);
 
-//åˆ¤æ–­æ˜¯å¦ä¸ºæ–‡ä»¶å¤¹
+//ÅĞ¶ÏÊÇ·ñÎªÎÄ¼ş¼Ğ
 bool isDir(string path);
 
-//è¿è¡Œç¨‹åºæˆ–è·¯å¾„
+//ÔËĞĞ³ÌĞò»òÂ·¾¶
 void execute(string s);
 
 
 int WINAPI WinMain(
-        HINSTANCE hInstance,       //ç¨‹åºå½“å‰å®ä¾‹çš„å¥æŸ„ï¼Œä»¥åéšæ—¶å¯ä»¥ç”¨GetModuleHandle(0)æ¥è·å¾—
-        HINSTANCE hPrevInstance,   //è¿™ä¸ªå‚æ•°åœ¨Win32ç¯å¢ƒä¸‹æ€»æ˜¯0ï¼Œå·²ç»åºŸå¼ƒä¸ç”¨äº†
-        char *lpCmdLine,          //æŒ‡å‘ä»¥/0ç»“å°¾çš„å‘½ä»¤è¡Œï¼Œä¸åŒ…æ‹¬EXEæœ¬èº«çš„æ–‡ä»¶åï¼Œ
-        //ä»¥åéšæ—¶å¯ä»¥ç”¨GetCommandLine()æ¥è·å–å®Œæ•´çš„å‘½ä»¤è¡Œ
-        int nCmdShow               //æŒ‡æ˜åº”è¯¥ä»¥ä»€ä¹ˆæ–¹å¼æ˜¾ç¤ºä¸»çª—å£
+        HINSTANCE hInstance,       //³ÌĞòµ±Ç°ÊµÀıµÄ¾ä±ú£¬ÒÔºóËæÊ±¿ÉÒÔÓÃGetModuleHandle(0)À´»ñµÃ
+        HINSTANCE hPrevInstance,   //Õâ¸ö²ÎÊıÔÚWin32»·¾³ÏÂ×ÜÊÇ0£¬ÒÑ¾­·ÏÆú²»ÓÃÁË
+        char *lpCmdLine,          //Ö¸ÏòÒÔ/0½áÎ²µÄÃüÁîĞĞ£¬²»°üÀ¨EXE±¾ÉíµÄÎÄ¼şÃû£¬
+        //ÒÔºóËæÊ±¿ÉÒÔÓÃGetCommandLine()À´»ñÈ¡ÍêÕûµÄÃüÁîĞĞ
+        int nCmdShow               //Ö¸Ã÷Ó¦¸ÃÒÔÊ²Ã´·½Ê½ÏÔÊ¾Ö÷´°¿Ú
 ) {
     string plateStr = getPlateStr();
     show(plateStr);
@@ -43,26 +43,26 @@ int WINAPI WinMain(
     return 0;
 }
 
-//æ˜¾ç¤ºæ¶ˆæ¯
+//ÏÔÊ¾ÏûÏ¢
 void show(string str) {
     MessageBox(nullptr, str.c_str(), "", MB_OK);
 }
 
-//åˆ¤æ–­æ˜¯å¦ä¸ºæ–‡ä»¶å¤¹
+//ÅĞ¶ÏÊÇ·ñÎªÎÄ¼ş¼Ğ
 bool isDir(string path) {
     struct _stat buf = {0};
     _stat(path.c_str(), &buf);
     return buf.st_mode & _S_IFDIR;
 }
 
-//åˆ¤æ–­æ˜¯å¦ä¸ºæ–‡ä»¶
+//ÅĞ¶ÏÊÇ·ñÎªÎÄ¼ş
 bool isFile(string path) {
     struct _stat buf = {0};
     _stat(path.c_str(), &buf);
     return buf.st_mode & _S_IFREG;
 }
 
-//æ ¹æ®æ–‡ä»¶è·¯å¾„è·å–æ‰€åœ¨æ–‡ä»¶å¤¹çš„è·¯å¾„
+//¸ù¾İÎÄ¼şÂ·¾¶»ñÈ¡ËùÔÚÎÄ¼ş¼ĞµÄÂ·¾¶
 string getFileDir(string path) {
     int i = path.find_last_of('\\');
     std::string p2 = path.substr(0, i);
@@ -70,7 +70,7 @@ string getFileDir(string path) {
     return p2.c_str();
 }
 
-//è·å–å‰ªåˆ‡æ¿å†…å®¹
+//»ñÈ¡¼ôÇĞ°åÄÚÈİ
 string getPlateStr() {
     if (OpenClipboard(nullptr)) {
         if (IsClipboardFormatAvailable(CF_TEXT)) {
@@ -83,7 +83,7 @@ string getPlateStr() {
     return "";
 }
 
-//è¿è¡Œç¨‹åºæˆ–è·¯å¾„
+//ÔËĞĞ³ÌĞò»òÂ·¾¶
 void execute(std::string s) {
     ShellExecute(
             nullptr,

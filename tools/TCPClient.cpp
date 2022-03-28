@@ -55,7 +55,7 @@ ssize_t TCPClient::recvo(void *buff, int index, size_t len, int flag) const {
         if (i == 0) {
             return i;
         } else if (i == -1) {
-            // 鏁版嵁鎺ユ敹閿欒锛屽彲鑳藉鎴风鏂紑杩炴帴
+            // 数据接收错误，可能客户端断开连接
             printf("error during recvall: %d\n", (int) i);
             return i;
         }

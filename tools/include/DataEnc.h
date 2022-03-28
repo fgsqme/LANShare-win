@@ -12,7 +12,7 @@ using namespace std;
 
 class DataEnc {
 private:
-    static const int HEADER_LEN = 12;//å¤´é•¿åº¦
+    static const int HEADER_LEN = 12;//Í·³¤¶È
 
     mbyte *m_bytes;
     int index = HEADER_LEN;
@@ -35,22 +35,22 @@ public:
     void setLength(int len);
 
 
-    DataEnc &putInt(int val);                 //å¾€æ•°æ®åŒ…æ·»åŠ int
-    DataEnc &putLong(mlong val);              //å¾€æ•°æ®åŒ…æ·»åŠ long
-    DataEnc &putByte(mbyte val);              //å¾€æ•°æ®åŒ…æ·»åŠ byte
-    DataEnc &putBool(bool val);              //å¾€æ•°æ®åŒ…æ·»åŠ bool
-    DataEnc &putFloat(float val);             //å¾€æ•°æ®åŒ…æ·»åŠ flaot
-    DataEnc &putDouble(double val);           //å¾€æ•°æ®åŒ…æ·»åŠ double
-    DataEnc &putStr(const char *str, int len);       //å¾€æ•°æ®åŒ…æ·»åŠ å­—ç¬¦
-    DataEnc &putStr(const char *str);       //å¾€æ•°æ®åŒ…æ·»åŠ å­—ç¬¦
-    DataEnc &putString(const string &str);       //å¾€æ•°æ®åŒ…æ·»åŠ å­—ç¬¦
+    DataEnc &putInt(int val);                 //ÍùÊı¾İ°üÌí¼Óint
+    DataEnc &putLong(mlong val);              //ÍùÊı¾İ°üÌí¼Ólong
+    DataEnc &putByte(mbyte val);              //ÍùÊı¾İ°üÌí¼Óbyte
+    DataEnc &putBool(bool val);              //ÍùÊı¾İ°üÌí¼Óbool
+    DataEnc &putFloat(float val);             //ÍùÊı¾İ°üÌí¼Óflaot
+    DataEnc &putDouble(double val);           //ÍùÊı¾İ°üÌí¼Ódouble
+    DataEnc &putStr(const char *str, int len);       //ÍùÊı¾İ°üÌí¼Ó×Ö·û
+    DataEnc &putStr(const char *str);       //ÍùÊı¾İ°üÌí¼Ó×Ö·û
+    DataEnc &putString(const string &str);       //ÍùÊı¾İ°üÌí¼Ó×Ö·û
 
-    DataEnc &putInt(int val, int i);                 //å¾€æ•°æ®åŒ…æ·»åŠ int
-    DataEnc &putLong(mlong val, int i);              //å¾€æ•°æ®åŒ…æ·»åŠ long
-    DataEnc &putByte(mbyte val, int i);              //å¾€æ•°æ®åŒ…æ·»åŠ byte
-    DataEnc &putFloat(float val, int i);             //å¾€æ•°æ®åŒ…æ·»åŠ flaot
-    DataEnc &putDouble(double val, int i);           //å¾€æ•°æ®åŒ…æ·»åŠ double
-    DataEnc &putStr(const char *str, int len, int i);       //å¾€æ•°æ®åŒ…æ·»åŠ å­—ç¬¦
+    DataEnc &putInt(int val, int i);                 //ÍùÊı¾İ°üÌí¼Óint
+    DataEnc &putLong(mlong val, int i);              //ÍùÊı¾İ°üÌí¼Ólong
+    DataEnc &putByte(mbyte val, int i);              //ÍùÊı¾İ°üÌí¼Óbyte
+    DataEnc &putFloat(float val, int i);             //ÍùÊı¾İ°üÌí¼Óflaot
+    DataEnc &putDouble(double val, int i);           //ÍùÊı¾İ°üÌí¼Ódouble
+    DataEnc &putStr(const char *str, int len, int i);       //ÍùÊı¾İ°üÌí¼Ó×Ö·û
 
     int getDataLen();
 

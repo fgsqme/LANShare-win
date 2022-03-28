@@ -13,16 +13,16 @@ using namespace std;
 
 class CodeUtils {
 public:
-    // utf8è½¬gbk
+    // utf8×ªgbk
     static string UTFToGBK(const char *srcStr);
 
-    // gbkè½¬utf-8
+    // gbk×ªutf-8
     static string Gbk2Utf8(const char *gbkStr);
 
-    // å­—ç¬¦è½¬å®½å­—ç¬¦
+    // ×Ö·û×ª¿í×Ö·û
     static wstring CharToWchar(const char *c, size_t m_encode = CP_ACP);
 
-    // å®½å­—ç¬¦è½¬å­—ç¬¦
+    // ¿í×Ö·û×ª×Ö·û
     static string WcharToChar(const wchar_t *wp, size_t m_encode = CP_ACP);
 
     static int getGbkStrLen(const char *str);

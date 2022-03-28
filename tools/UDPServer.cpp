@@ -23,7 +23,7 @@ UDPServer::UDPServer(int port) : port(port) {
         return;
     }
 
-    //åˆ›å»ºå¥—æ¥å­—
+    //´´½¨Ì×½Ó×Ö
     udp_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (udp_fd == INVALID_SOCKET) {
         printf("create socket fail\n");
@@ -40,9 +40,9 @@ UDPServer::UDPServer(int port) : port(port) {
 #endif
 
     sockaddr_in local_addr{};
-    local_addr.sin_family = AF_INET;          // ä½¿ç”¨IPV4åè®®
+    local_addr.sin_family = AF_INET;          // Ê¹ÓÃIPV4Ğ­Òé
     local_addr.sin_port = htons(port);
-    local_addr.sin_addr.s_addr = INADDR_ANY;  // ç»‘å®šæœ¬åœ°IP
+    local_addr.sin_addr.s_addr = INADDR_ANY;  // °ó¶¨±¾µØIP
     int ret = bind(udp_fd, (sockaddr *) &local_addr, sizeof local_addr);
     if (ret < 0) {
         printf("bind fail:\n");
@@ -79,7 +79,7 @@ ssize_t UDPServer::recvo(void *buff, size_t len, int flag) {
         if (i == 0) {
             return i;
         } else if (i == -1) {
-            // æ•°æ®æ¥æ”¶é”™è¯¯ï¼Œå¯èƒ½å®¢æˆ·ç«¯æ–­å¼€è¿æ¥
+            // Êı¾İ½ÓÊÕ´íÎó£¬¿ÉÄÜ¿Í»§¶Ë¶Ï¿ªÁ¬½Ó
             printf("error during recvall: %d\n", (int) i);
             return i;
         }
@@ -115,7 +115,7 @@ ssize_t UDPServer::recvo(CLIENT_ADDR *src_addr, void *buff, size_t len, int flag
         if (i == 0) {
             return i;
         } else if (i == -1) {
-            // æ•°æ®æ¥æ”¶é”™è¯¯ï¼Œå¯èƒ½å®¢æˆ·ç«¯æ–­å¼€è¿æ¥
+            // Êı¾İ½ÓÊÕ´íÎó£¬¿ÉÄÜ¿Í»§¶Ë¶Ï¿ªÁ¬½Ó
             printf("error during recvall: %d\n", (int) i);
             return i;
         }

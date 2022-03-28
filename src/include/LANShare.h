@@ -11,29 +11,29 @@
 #include <list>
 #include <map>
 
-// 局域网通讯命令
-#define UDP_GET_DEVICES  1001       // 获取设备
-#define UDP_SET_DEVICES  1002       // 设置设备
-#define UDP_DEVICES_OFF_LINE 1003   // 设备下线
-#define UDP_DEVICES_MESSAGE  1004    // 广播消息
-#define UDP_DEVICES_MESSAGE_TO_CLIPBOARD  1005  // 广播消息到剪切板
-// 文件服务命令
-#define FS_SHARE_FILE  1101    // 发送文件
-#define FS_AGREE  1102         // 同意
-#define FS_NOT_AGREE  1103     // 不同意
+// ������ͨѶ����
+#define UDP_GET_DEVICES  1001       // ��ȡ�豸
+#define UDP_SET_DEVICES  1002       // �����豸
+#define UDP_DEVICES_OFF_LINE 1003   // �豸����
+#define UDP_DEVICES_MESSAGE  1004    // �㲥��Ϣ
+#define UDP_DEVICES_MESSAGE_TO_CLIPBOARD  1005  // �㲥��Ϣ�����а�
+// �ļ���������
+#define FS_SHARE_FILE  1101    // �����ļ�
+#define FS_AGREE  1102         // ͬ��
+#define FS_NOT_AGREE  1103     // ��ͬ��
 
-#define FS_DATA  1            // 数据
-#define FS_END  2            // 接收结束
-#define FS_CLOSE  3           // 取消
+#define FS_DATA  1            // ����
+#define FS_END  2            // ���ս���
+#define FS_CLOSE  3           // ȡ��
 
-// Service 连接命令
-#define SERVICE_IF_RECIVE_FILES  1201    // 是否接收文件
-#define SERVICE_SHOW_PROGRESS  1202      // 显示文件进度框
-#define SERVICE_PROGRESS  1203           // 文件进度
-#define SERVICE_CLOSE_PROGRESS  1204     // 关闭文件进度框
-#define SERVICE_UPDATE_DEVICES  1205     // 更新设备列表
+// Service ��������
+#define SERVICE_IF_RECIVE_FILES  1201    // �Ƿ�����ļ�
+#define SERVICE_SHOW_PROGRESS  1202      // ��ʾ�ļ����ȿ�
+#define SERVICE_PROGRESS  1203           // �ļ�����
+#define SERVICE_CLOSE_PROGRESS  1204     // �ر��ļ����ȿ�
+#define SERVICE_UPDATE_DEVICES  1205     // �����豸�б�
 
-// 默认端口
+// Ĭ�϶˿�
 #define DEFAULT_UDPPORT 4573
 #define DEFAULT_TCPPORT 5856
 
@@ -46,9 +46,9 @@ struct MFile {
 class LANShare {
 
 public:
-    // 保存在线的设备
+    // �������ߵ��豸
     map <string, Device> onLineDevices;
-    // 自己设备信息
+    // �Լ��豸��Ϣ
     Device *mDevice;
     bool isRun = true;
     UDPServer *server;
