@@ -11,13 +11,12 @@
 using namespace std;
 
 
-
 int main() {
     LANShare lanShare;
     // TCP 文件接收线程
     thread tTcpServer(LANShare::createTcpServer);
     // UDP 接收命令线程
-    thread tRunRecive(LANShare::runRecive, &lanShare);
+    thread tRunRecive(LANShare::runRecive, &lanShare, (HWND *) nullptr);
     // 扫描设备线程
     thread tScannDevice(LANShare::scannDevice, &lanShare);
     char buffer[2048];

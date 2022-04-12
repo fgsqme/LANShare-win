@@ -57,7 +57,7 @@ void LANShare::handelFile(TCPClient *client) {
 
         printf("ip:%s:%d name:%s\n", ip, port, name);
 
-        list <MFile> files;
+        list<MFile> files;
 
         for (int i = 0; i < count; i++) {
             if (client->recvo(buffer, 0, DataEnc::headerSize(), 0) != DataEnc::headerSize()) return;
@@ -168,10 +168,11 @@ void LANShare::scannDevice(LANShare *lanShare) {
     }
 }
 
+//SendMessage(GetDlgItem(hwnd, MESSAGE_BOX), LB_ADDSTRING, 0, (LPARAM) recv_buf);
 
 //
 
-void LANShare::runRecive(LANShare *lanShare) {
+void LANShare::runRecive(LANShare *lanShare, HWND *hwnd) {
 
     mbyte *buffer = new mbyte[4096];
     sockaddr_in clientAddr{};
@@ -228,6 +229,9 @@ void LANShare::runRecive(LANShare *lanShare) {
             char *message = dataDec.getStr();
             string gbkMessage = CodeUtils::UTFToGBK(message);
 
+            if(hwnd != nullptr){
+                SendMessage(GetDlgItem(*hwnd, 503), LB_ADDSTRING, 0, (LPARAM) gbkMessage.c_str());
+            }
             printf("devName: %s message:%s\n", devName, gbkMessage.c_str());
             // µ¯´°
             // MessageBox(nullptr, gbkMessage.c_str(), "", MB_OK);

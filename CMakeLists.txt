@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fexec-charset=GBK")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=GBK")
-
-
 include_directories(
         "src/include"
         "tools/include"
@@ -31,7 +27,7 @@ add_executable(
         ${SORCES}
         src/Device.cpp
         src/LANShare.cpp
-        src/main.cpp )
+        src/main.cpp)
 
 add_executable(
         test
@@ -46,12 +42,28 @@ add_executable(
         ${SORCES}
         src/guitest.cpp)
 
+add_executable(
+        LGui
+        ${SORCES}
+        src/LGui.cpp
+        src/Device.cpp
+        src/LANShare.cpp
+)
+
+add_executable(
+        MFCGui
+        ${SORCES}
+        src/MFCGui.cpp
+)
+
 
 if (CMAKE_SYSTEM_NAME MATCHES "Windows")
     target_link_libraries(LANShare wsock32)
     target_link_libraries(test wsock32 iphlpapi)
     target_link_libraries(gui wsock32 iphlpapi)
     target_link_libraries(guitest wsock32 iphlpapi)
+    target_link_libraries(LGui wsock32 iphlpapi)
+    target_link_libraries(MFCGui wsock32 iphlpapi)
 endif ()
 
 

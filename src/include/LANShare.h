@@ -59,7 +59,7 @@ public:
 
     ~LANShare();
 
-    static void runRecive(LANShare *lanShare);
+    static void runRecive(LANShare *lanShare,HWND *hwnd);
 
     static void createTcpServer();
 
